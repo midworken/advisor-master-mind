@@ -1,0 +1,129 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+
+export default function MastermindDashboard() {
+  const [goals, setGoals] = useState([
+    { id: 1, text: "Grow client base by 10%", assignedTo: "John", progress: 40, points: 40 },
+    { id: 2, text: "Host a quarterly mastermind retreat", assignedTo: "Sarah", progress: 20, points: 20 },
+  ]);
+  const [tasks, setTasks] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [newGoal, setNewGoal] = useState("");
+  const [goalAssignedTo, setGoalAssignedTo] = useState("");
+  const [newTask, setNewTask] = useState("");
+  const [assignedTo, setAssignedTo] = useState("");
+  
+  const getBadge = (progress) => {
+    if (progress >= 100) return "🏆";
+    if (progress >= 75) return "🎖️";
+    if (progress >= 50) return "🏅";
+    if (progress >= 25) return "🔰";
+    return "";
+  };
+  
+  const addGoal = () => {
+    if (newGoal.trim() !== "" && goalAssignedTo.trim() !== "") {
+      setGoals([...goals, { id: Date.now(), text: newGoal, assignedTo: goalAssignedTo, progress: 0, points: 0 }]);
+      setNewGoal("");
+      setGoalAssignedTo("");
+    }
+  };
+
+  const updateGoalProgress = (id, progress) => {
+    setGoals(
+      goals.map((goal) =>
+        goal.id === id ? { ...goal, progress: Number(progress) } : goal
+      )
+    );
+  };
+
+  const addTask = () => {
+    if (newTask.trim() !== "" && assignedTo.trim() !== "") {
+      setTasks([...tasks, { id: Date.now(), text: newTask, assignedTo, status: "Pending" }]);
+      setNewTask("");
+      setAssignedTo("");
+    }
+  };
+
+  const updateTaskStatus = (id, status) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === id ? { ...task, status } : task
+      )
+    );
+  };
+
+  const uploadFile = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFiles([...files, { id: Date.now(), name: file.name }]);
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-lg mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Mastermind Dashboard</h1>
+      
+      <h2 className="text-xl font-bold mb-2">Member Goals</h2>
+      <div className="mb-4 flex gap-2">
+        <Input value={newGoal} onChange={(e) => setNewGoal(e.target.value)} placeholder="Enter a new goal" />
+        <Input value={goalAssignedTo} onChange={(e) => setGoalAssignedTo(e.target.value)} placeholder="Assign to (Member Name)" />
+        <Button onClick={addGoal}>Add Goal</Button>
+      </div>
+      <div className="space-y-2">
+        {goals.map((goal) => (
+          <Card key={goal.id} className="p-3">
+            <CardContent className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold">{goal.text} {getBadge(goal.progress)}</span> - Assigned to: {goal.assignedTo}
+              </div>
+              <div className="flex justify-between items-center">
+                <span>Progress: {goal.progress}%</span>
+                <Progress value={goal.progress} max={100} className="w-1/2" />
+                <Input type="number" value={goal.progress} min="0" max="100" onChange={(e) => updateGoalProgress(goal.id, e.target.value)} />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      
+      <h2 className="text-xl font-bold mt-6 mb-4">Assigned Tasks</h2>
+      <div className="mb-4 flex gap-2">
+        <Input value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="Enter a new task" />
+        <Input value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} placeholder="Assign to (Member Name)" />
+        <Button onClick={addTask}>Add Task</Button>
+      </div>
+      <div className="space-y-2">
+        {tasks.map((task) => (
+          <Card key={task.id} className="p-3">
+            <CardContent className="flex justify-between items-center">
+              <div>
+                <span className="font-semibold">{task.text}</span> - Assigned to: {task.assignedTo}
+              </div>
+              <select value={task.status} onChange={(e) => updateTaskStatus(task.id, e.target.value)} className="border p-1 rounded">
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+      
+      <h2 className="text-xl font-bold mt-6 mb-4">File Vault</h2>
+      <input type="file" onChange={uploadFile} className="mb-4" />
+      <div className="space-y-2">
+        {files.map((file) => (
+          <Card key={file.id} className="p-3">
+            <CardContent>
+              <span className="font-semibold">{file.name}</span>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
