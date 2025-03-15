@@ -1,0 +1,25 @@
+{
+  "name": "advisor-master-mind",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/midworken/Advisor-Master-Mind.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/midworken/Advisor-Master-Mind/issues"
+  },
+  "homepage": "https://github.com/midworken/Advisor-Master-Mind#readme",
+  "description": "",
+  "dependencies": {
+    "next": "^15.2.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
